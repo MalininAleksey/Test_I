@@ -59,7 +59,7 @@ class Reader:
                 final_list.append(tuple_list)
             return final_list
 
-class Sorter:
+class DataWorker:
 
     @staticmethod
     def sort_list_by_tuple(tuple_list):
