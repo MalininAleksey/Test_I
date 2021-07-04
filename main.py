@@ -1,6 +1,5 @@
 from csv import reader
 from json import load
-from xml.dom import minidom
 import xml.etree.ElementTree as ET
 
 
@@ -11,6 +10,11 @@ class Reader:
 
 
     def read_csv(self):
+
+        """
+        :return: list as [[(x11,x12),(x21,x22)...(xN1,xN2)],[]...[]]
+        """
+
         with open(self.path, encoding="utf-8") as r_file:
             reader_object = reader(r_file, delimiter=",")
             count = 0
@@ -27,6 +31,11 @@ class Reader:
 
 
     def read_json(self):
+
+        """
+        :return: list as [[(x11,x12),(x21,x22)...(xN1,xN2)],[]...[]]
+        """
+
         with open(self.path, encoding="utf-8") as r_file:
             reader_object = load(r_file)
             final_list = []
@@ -37,6 +46,11 @@ class Reader:
 
 
     def read_xml(self):
+
+        """
+        :return: list as [[(x11,x12),(x21,x22)...(xN1,xN2)],[]...[]]
+        """
+
         with open(self.path, encoding='utf-8') as r_file:
             root = ET.parse(r_file).getroot()
             final_list = []
@@ -44,6 +58,12 @@ class Reader:
                 tuple_list = [(sub_item.attrib['name'], sub_item[0].text) for sub_item in item]
                 final_list.append(tuple_list)
             return final_list
+
+class Sorter:
+
+    @staticmethod
+    def sort_list_by_tuple(tuple_list):
+
 
 
 if __name__ == "__main__":
