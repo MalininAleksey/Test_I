@@ -1,6 +1,7 @@
 from csv import reader
 from json import load
 import xml.etree.ElementTree as ET
+from pprint import pprint
 
 
 class Reader:
@@ -40,7 +41,7 @@ class Reader:
             reader_object = load(r_file)
             final_list = []
             for item in reader_object['fields']:
-                turple_list = [(key, value) for key, value in item.items()]
+                turple_list = [(key, str(value)) for key, value in item.items()]
                 final_list.append(turple_list)
             return final_list
 
@@ -59,18 +60,45 @@ class Reader:
                 final_list.append(tuple_list)
             return final_list
 
+
 class DataWorker:
 
     @staticmethod
     def sort_list_by_tuple(tuple_list):
-        pass
+        for item in tuple_list:
+            item.sort(key=lambda element: element[0])
+        return tuple_list
+
+    @staticmethod
+    def unite_data(*args):
+        title_list = []
+        content = []
+        for item in args:
+            for sub_item in item:
+                title_list.append([element[0] for element in sub_item])
+                content.append([element[1] for element in sub_item])
+        pprint(content)
+        title = max(title_list, key=len)
+        return title, content
+
+    @staticmethod
+    def sort_by_param_name(param_name, list):
+        index = list[0].index(param_name)
+        sorted_list = [(item[index], item) for item in list[1]]
+        sorted_list.sort(key=lambda element: element[0])
+        final_content_list = [item[1] for item in sorted_list]
+        return [list[0]] + final_content_list
+
 
 
 
 if __name__ == "__main__":
-    csv = Reader('csv_data_1.csv')
-    print(csv.read_csv())
-    json = Reader('json_data.json')
-    print(json.read_json())
-    xml = Reader('xml_data.xml')
-    print(xml.read_xml())
+    csv = DataWorker.sort_list_by_tuple(Reader('csv_data_1.csv').read_csv())
+    #print(csv)
+    json = DataWorker.sort_list_by_tuple(Reader('json_data.json').read_json())
+    #print(json)
+    xml = DataWorker.sort_list_by_tuple(Reader('xml_data.xml').read_xml())
+    #print(xml)
+    data = DataWorker.unite_data(csv, json, xml)
+    print(DataWorker.unite_data(csv, json, xml))
+    pprint(DataWorker.sort_by_param_name('D1', data))
