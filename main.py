@@ -82,8 +82,9 @@ class DataWorker:
         content = []
         for item in args:
             for sub_item in item:
-                title_list.append([element[0] for element in sub_item])
-                content.append([element[1] for element in sub_item])
+                for sub_sub_item in sub_item:
+                    title_list.append([element[0] for element in sub_sub_item])
+                    content.append([element[1] for element in sub_sub_item])
         title = min(title_list, key=len)
         cut_content = [item[:len(title)] for item in content]
         return title, cut_content
@@ -118,9 +119,11 @@ if __name__ == "__main__":
     input_data = ['csv_data_1.csv', 'csv_data_2.csv', 'json_data.json', 'xml_data.xml']
     #Читаем данные из файлов и сразу сортируем по именам заголовков
     collect_data = [DataWorker.sort_list_by_tuple(Reader(item).read_file()) for item in input_data]
+    pprint(collect_data)
     #Объединяем все в единый список
     unite_data = DataWorker.unite_data(collect_data)
+    pprint(unite_data)
     #Сортируем по содержимое по выбранному заголовку
     sorted_data = DataWorker.sort_by_param_name('D1', unite_data)
     #Записываем в файл
-    Writer(sorted_data).write_in_tsv('test.tsv')
+    Writer(sorted_data).write_in_tsv('test_3.tsv')
