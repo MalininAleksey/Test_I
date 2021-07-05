@@ -107,11 +107,14 @@ class Writer:
 
 
 if __name__ == "__main__":
-    a = "ABCDEFG"
+    #Читаем данные из файлов и сразу сортируем по именам заголовков
     csv_1 = DataWorker.sort_list_by_tuple(Reader('csv_data_1.csv').read_csv())
     csv_2 = DataWorker.sort_list_by_tuple(Reader('csv_data_2.csv').read_csv())
     json = DataWorker.sort_list_by_tuple(Reader('json_data.json').read_json())
     xml = DataWorker.sort_list_by_tuple(Reader('xml_data.xml').read_xml())
+    #Объединяем все в единый список
     unite_data = DataWorker.unite_data(csv_1, csv_2, json, xml)
+    #Сортируем по содержимое по выбранному заголовку
     sorted_data = DataWorker.sort_by_param_name('D1', unite_data)
+    #Записываем в файл
     Writer(sorted_data).write_in_tsv('test.tsv')
