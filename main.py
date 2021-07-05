@@ -7,7 +7,15 @@ from pprint import pprint
 class Reader:
 
     def __init__(self, file_name):
-        self.path = file_name
+        self.file_name = file_name
+
+    def read_file(self):
+        if ".csv" in self.file_name:
+            return self.read_csv()
+        elif ".xml" in self.file_name:
+            return self.read_xml()
+        elif ".json" in self.file_name:
+            return self.read_json()
 
     def read_csv(self):
 
@@ -15,7 +23,7 @@ class Reader:
         :return: list as [[(x11,x12),(x21,x22)...(xN1,xN2)],[]...[]]
         """
 
-        with open(self.path, encoding="utf-8") as r_file:
+        with open(self.file_name, encoding="utf-8") as r_file:
             reader_object = reader(r_file, delimiter=",")
             count = 0
             final_list = []
@@ -36,7 +44,7 @@ class Reader:
         :return: list as [[(x11,x12),(x21,x22)...(xN1,xN2)],[]...[]]
         """
 
-        with open(self.path, encoding="utf-8") as r_file:
+        with open(self.file_name, encoding="utf-8") as r_file:
             reader_object = load(r_file)
             final_list = []
             for item in reader_object['fields']:
@@ -51,7 +59,7 @@ class Reader:
         :return: list as [[(x11,x12),(x21,x22)...(xN1,xN2)],[]...[]]
         """
 
-        with open(self.path, encoding='utf-8') as r_file:
+        with open(self.file_name, encoding='utf-8') as r_file:
             root = ET.parse(r_file).getroot()
             final_list = []
             for item in root:
@@ -107,13 +115,11 @@ class Writer:
 
 
 if __name__ == "__main__":
+    input_data = ['csv_data_1.csv', 'csv_data_2.csv', 'json_data.json', 'xml_data.xml']
     #Читаем данные из файлов и сразу сортируем по именам заголовков
-    csv_1 = DataWorker.sort_list_by_tuple(Reader('csv_data_1.csv').read_csv())
-    csv_2 = DataWorker.sort_list_by_tuple(Reader('csv_data_2.csv').read_csv())
-    json = DataWorker.sort_list_by_tuple(Reader('json_data.json').read_json())
-    xml = DataWorker.sort_list_by_tuple(Reader('xml_data.xml').read_xml())
+    collect_data = [DataWorker.sort_list_by_tuple(Reader(item).read_file()) for item in input_data]
     #Объединяем все в единый список
-    unite_data = DataWorker.unite_data(csv_1, csv_2, json, xml)
+    unite_data = DataWorker.unite_data(collect_data)
     #Сортируем по содержимое по выбранному заголовку
     sorted_data = DataWorker.sort_by_param_name('D1', unite_data)
     #Записываем в файл
