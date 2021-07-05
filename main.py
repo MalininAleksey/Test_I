@@ -1,4 +1,4 @@
-from csv import reader
+from csv import reader, writer, DictWriter
 from json import load
 import xml.etree.ElementTree as ET
 from pprint import pprint
@@ -6,9 +6,8 @@ from pprint import pprint
 
 class Reader:
 
-    def __init__(self, path):
-        self.path = path
-
+    def __init__(self, file_name):
+        self.path = file_name
 
     def read_csv(self):
 
@@ -77,9 +76,9 @@ class DataWorker:
             for sub_item in item:
                 title_list.append([element[0] for element in sub_item])
                 content.append([element[1] for element in sub_item])
-        pprint(content)
-        title = max(title_list, key=len)
-        return title, content
+        title = min(title_list, key=len)
+        cut_content = [item[:len(title)] for item in content]
+        return title, cut_content
 
     @staticmethod
     def sort_by_param_name(param_name, list):
@@ -90,15 +89,28 @@ class DataWorker:
         return [list[0]] + final_content_list
 
 
+class Writer:
+
+    def __init__(self, data):
+        self.data = data
+
+    def write_in_tsv(self, file_name):
+        with open(file_name, 'w', encoding='utf-8', newline='') as wr_file:
+            tsv_writer = writer(wr_file, delimiter='\t')
+            for item in self.data:
+                tsv_writer.writerow(item)
+
+
+
+
+
 
 
 if __name__ == "__main__":
-    csv = DataWorker.sort_list_by_tuple(Reader('csv_data_1.csv').read_csv())
-    #print(csv)
+    csv_1 = DataWorker.sort_list_by_tuple(Reader('csv_data_1.csv').read_csv())
+    csv_2 = DataWorker.sort_list_by_tuple(Reader('csv_data_2.csv').read_csv())
     json = DataWorker.sort_list_by_tuple(Reader('json_data.json').read_json())
-    #print(json)
     xml = DataWorker.sort_list_by_tuple(Reader('xml_data.xml').read_xml())
-    #print(xml)
-    data = DataWorker.unite_data(csv, json, xml)
-    print(DataWorker.unite_data(csv, json, xml))
-    pprint(DataWorker.sort_by_param_name('D1', data))
+    unite_data = DataWorker.unite_data(csv_1, csv_2, json, xml)
+    sorted_data = DataWorker.sort_by_param_name('D1', unite_data)
+    Writer(sorted_data).write_in_tsv('test.tsv')
