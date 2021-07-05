@@ -65,7 +65,7 @@ class DataWorker:
     @staticmethod
     def sort_list_by_tuple(tuple_list):
         for item in tuple_list:
-            item.sort(key=lambda element: element[0])
+            item.sort(key=lambda element: (element[0][0], int(element[0][1:(len(element[0]))])), reverse=False)
         return tuple_list
 
     @staticmethod
@@ -107,6 +107,7 @@ class Writer:
 
 
 if __name__ == "__main__":
+    a = "ABCDEFG"
     csv_1 = DataWorker.sort_list_by_tuple(Reader('csv_data_1.csv').read_csv())
     csv_2 = DataWorker.sort_list_by_tuple(Reader('csv_data_2.csv').read_csv())
     json = DataWorker.sort_list_by_tuple(Reader('json_data.json').read_json())
